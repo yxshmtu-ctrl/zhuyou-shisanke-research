@@ -144,11 +144,24 @@ description: |
 
 ---
 
+## 路径与配置（重要：全部相对本技能目录，便于移植/换机/clone）
+- **本技能目录** = SKILL.md 所在目录（运行时可取 SKILL.md 的绝对路径推断）。所有数据路径请基于它定位，不要写死绝对路径。
+- 数据相对路径：
+  - 全文 OCR：`references/original/OCR全文-未校对.txt`
+  - 逐页文本：`references/original/raw页文本/`（p001~p104.txt）
+  - 结构研究笔记：`references/research/01-全书结构研究笔记.md`
+  - 页图提取脚本：`scripts/extract_page_img.py`
+- **源 PDF（符图权威源）非本仓库内容**（受版权保护的影印扫描件，未随仓库分发）。需要展示符图时，运行脚本前请确认源 PDF 可用，三种方式任选：
+  1. 把原 PDF 放到技能目录上级或桌面（脚本自动查找 `祝由十三科.pdf`）
+  2. 设环境变量 `ZHUYOU_SRC=<pdf路径>`
+  3. 调用时第3参数显式传：`python scripts/extract_page_img.py <页码> <输出目录> <源PDF路径>`
+- 找不到源 PDF 时：技能仍可回答文字内容（OCR/结构/密咒文本），但**符图无法展示**——此时应明确告知"需提供原书 PDF 才能展示符图"，并提示可仅提供 OCR 文字。
+
 ## 素材与核校
 - 全文 OCR：references/original/OCR全文-未校对.txt（104页）
 - 逐页文本：references/original/raw页文本/
 - 结构研究笔记：references/research/01-全书结构研究笔记.md
-- 原书影印：C:\Users\JKer\Desktop\祝由十三科.pdf（引用请对照此原图）
+- 源 PDF（原书影印）：未随仓库分发，见上方"路径与配置"定位
 - 整理日期：2026-08-28
 
 ---
@@ -158,8 +171,8 @@ description: |
 每次用本技能回答后，必须同时做两件事：
 
 ### 1. 生成存档文档到桌面（WORD 版）
-- 将本次问答整理成一份 **Word 文档 (.docx)**，保存到：
-  `C:\Users\JKer\Desktop\祝由十三科-应答档案\<YYYYMMDD-主题>.docx`
+- 将本次问答整理成一份 **Word 文档 (.docx)**，默认保存到用户桌面目录下的 `祝由十三科-应答档案\`（换机/换用户时以当前系统桌面为准，路径可配：环境变量 `ZHUYOU_ARCHIVE` 指定目录，否则用 `~/Desktop/祝由十三科-应答档案/`）
+- 文件名：`<YYYYMMDD>-<主题>.docx`
 - 用 docx-js 生成（参考本机已有的 docx skill 用法），中文用"Microsoft YaHei"字体、A4、标题分级、表格规范
 - 文档包含：问题原文、回答正文、涉及页码、密咒原文、符图（**直接内嵌到 Word**）、OCR 校对提示
 - 若一次会话有多个问题，合并存为一个文档，按 Q/A 分段
@@ -175,12 +188,13 @@ description: |
 - 加一行说明：梵音咒语为汉译转写，OCR 或有错讹，以原书页图为准
 
 **符（图像）**
-- 用页面图像提取脚本，从原书对应页切出整页图像：
+- 用页面图像提取脚本（相对本技能目录）：
   ```
-  python "C:\Users\JKer\Desktop\祝由十三科-古籍文献研究\scripts\extract_page_img.py" <页码> "C:\Users\JKer\Desktop\祝由十三科-应答档案\_原书页图"
+  python <技能目录>/scripts/extract_page_img.py <页码> <存档目录>/_原书页图 [源PDF路径]
   ```
 - 在回答中**插入该页图像**（用 markdown 图片引用指向生成的 pNNN.png，或直接内嵌展示）
 - 说明此符的用途、所属部位（上部/中部/下部/某科）、配咒及引药
 - 若该符同时有旁注文字（主治/用法），一并照录
+- 找不到源 PDF 时：说明"需原书 PDF 才能展示符图"，提供该页 OCR 文字替代
 
 **引用规范**：所有密咒与符内容均标注页码，并提示"图像/文字取自原书影印第 X 页"。因本技能所附 OCR 为初校稿，凡展示密咒原文与符图，均鼓励使用者对照 pNNN.png 原图核校。
